@@ -4,9 +4,14 @@ import StatusBadge from "./StatusBadge";
 type ActiveTaskCardProps = {
   task?: Task;
   onComplete: (taskCode: string) => void;
+  onStandby: (taskCode: string) => void;
 };
 
-export default function ActiveTaskCard({ task, onComplete }: ActiveTaskCardProps) {
+export default function ActiveTaskCard({
+  task,
+  onComplete,
+  onStandby,
+}: ActiveTaskCardProps) {
   if (!task) {
     return (
       <div className="rounded-[2rem] border border-white/15 bg-white/[0.10] p-6 shadow-2xl shadow-black/20 backdrop-blur-2xl">
@@ -51,7 +56,10 @@ export default function ActiveTaskCard({ task, onComplete }: ActiveTaskCardProps
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">
-        <button className="rounded-2xl bg-amber-300 px-5 py-3 text-sm font-black text-[#061521] shadow-lg shadow-amber-300/20 transition hover:scale-[1.02]">
+        <button
+          className="rounded-2xl bg-amber-300 px-5 py-3 text-sm font-black text-[#061521] shadow-lg shadow-amber-300/20 transition hover:scale-[1.02]"
+          onClick={() => onStandby(task.code)}
+        >
           Metti in stand-by
         </button>
 

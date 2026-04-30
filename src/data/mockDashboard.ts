@@ -11,6 +11,8 @@ export const tasks: Task[] = [
     description:
       "Controllo documentale della pratica cliente prima della lavorazione operativa.",
     workTime: "0h 00m",
+    standbyTime: "0h 00m",
+    blockedTime: "0h 00m",
   },
   {
     title: "Preparare relazione impianto FV 1MW",
@@ -22,6 +24,8 @@ export const tasks: Task[] = [
     description:
       "Bozza relazione tecnica con strutture fisse, vincoli e note operative collegate alla pratica.",
     workTime: "1h 20m",
+    standbyTime: "0h 00m",
+    blockedTime: "0h 00m",
   },
   {
     title: "Contatto cliente Beta",
@@ -33,5 +37,11 @@ export const tasks: Task[] = [
     description:
       "Richiamare il cliente per integrare le informazioni mancanti della richiesta.",
     workTime: "0h 45m",
+    standbyTime: "0h 35m",
+    blockedTime: "0h 00m",
+    standbyInfo: {
+      reason: "attesa cliente",
+      note: "In attesa di conferma sui dati mancanti.",
+    },
   },
 ];

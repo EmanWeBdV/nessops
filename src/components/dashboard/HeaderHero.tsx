@@ -1,4 +1,9 @@
-export default function HeaderHero() {
+type HeaderHeroProps = {
+  isDayClosed: boolean;
+  onEndDay: () => void;
+};
+
+export default function HeaderHero({ isDayClosed, onEndDay }: HeaderHeroProps) {
   return (
     <header className="relative overflow-hidden rounded-[2rem] border border-white/15 bg-white/[0.11] p-6 shadow-2xl shadow-black/20 backdrop-blur-2xl">
       <div className="absolute right-[-80px] top-[-100px] h-72 w-72 rounded-full bg-[#97B822]/20 blur-3xl" />
@@ -25,8 +30,11 @@ export default function HeaderHero() {
             Notifiche
           </button>
 
-          <button className="rounded-2xl bg-gradient-to-r from-[#97B822] to-[#C6E94B] px-5 py-3 text-sm font-black text-[#061521] shadow-xl shadow-[#97B822]/25 transition hover:scale-[1.02]">
-            Fine giornata
+          <button
+            className="rounded-2xl bg-gradient-to-r from-[#97B822] to-[#C6E94B] px-5 py-3 text-sm font-black text-[#061521] shadow-xl shadow-[#97B822]/25 transition hover:scale-[1.02]"
+            onClick={onEndDay}
+          >
+            {isDayClosed ? "Giornata chiusa" : "Fine giornata"}
           </button>
         </div>
       </div>

@@ -8,6 +8,22 @@ export type TaskStatus =
 
 export type TaskPriority = "Bassa" | "Media" | "Alta";
 
+export type StandbyReason =
+  | "attesa cliente"
+  | "attesa amministrazione"
+  | "attesa collega"
+  | "attesa documenti"
+  | "attesa materiale"
+  | "problema tecnico"
+  | "attività dipendente da un'altra attività"
+  | "altro";
+
+export type StandbyInfo = {
+  reason: StandbyReason;
+  note?: string;
+  blockingTaskCode?: string;
+};
+
 export type Task = {
   title: string;
   code: string;
@@ -17,4 +33,7 @@ export type Task = {
   accent: string;
   description?: string;
   workTime?: string;
+  standbyTime?: string;
+  blockedTime?: string;
+  standbyInfo?: StandbyInfo;
 };

@@ -19,7 +19,21 @@ function getStatusVariant(status: TaskStatus) {
     return "completed";
   }
 
+  if (status === "Bloccata") {
+    return "blocked";
+  }
+
+  if (status === "Annullata") {
+    return "cancelled";
+  }
+
   return "todo";
+}
+
+function isTaskActionDisabled(status: TaskStatus) {
+  return (
+    status === "Completata" || status === "Annullata" || status === "Bloccata"
+  );
 }
 
 export default function TasksList({ tasks, onTaskAction }: TasksListProps) {
@@ -72,12 +86,19 @@ export default function TasksList({ tasks, onTaskAction }: TasksListProps) {
                     }
                   />
                 </div>
+
+                {task.status === "In stand-by" && task.standbyInfo ? (
+                  <p className="mt-2 text-xs leading-5 text-amber-100/75">
+                    Motivo: {task.standbyInfo.reason}
+                    {task.standbyInfo.note ? ` - ${task.standbyInfo.note}` : ""}
+                  </p>
+                ) : null}
               </div>
             </div>
 
             <button
               className="rounded-2xl bg-white px-4 py-2 text-sm font-black text-[#061521] shadow-lg transition enabled:group-hover:scale-[1.02] disabled:cursor-not-allowed disabled:bg-white/40"
-              disabled={task.status === "Completata"}
+              disabled={isTaskActionDisabled(task.status)}
               onClick={() => onTaskAction(task.code)}
             >
               {task.action}
