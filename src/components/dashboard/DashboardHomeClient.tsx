@@ -1,8 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { StandbyInfo, Task, TaskStatus } from "../../types/task";
-import { tasks as mockTasks } from "../../data/mockDashboard";
+import type {
+  ActivityMessage,
+  StandbyInfo,
+  Task,
+  TaskStatus,
+} from "../../types/task";
+import {
+  activityMessages as mockActivityMessages,
+  tasks as mockTasks,
+} from "../../data/mockDashboard";
 import ActiveTaskCard from "./ActiveTaskCard";
 import AiCard from "./AiCard";
 import EndDayModal from "./EndDayModal";
@@ -79,8 +87,25 @@ function buildSummary(tasks: Task[]) {
   };
 }
 
+function createActivityEvent(taskCode: string, body: string): ActivityMessage {
+  return {
+    id: `MSG-${Date.now()}`,
+    taskCode,
+    author: "NessOps",
+    role: "Sistema",
+    body,
+    createdAt: new Intl.DateTimeFormat("it-IT", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date()),
+    kind: "event",
+  };
+}
+
 export default function DashboardHomeClient() {
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
+  const [activityMessages, setActivityMessages] =
+    useState<ActivityMessage[]>(mockActivityMessages);
   const [standbyTask, setStandbyTask] = useState<Task | null>(null);
   const [isEndDayOpen, setIsEndDayOpen] = useState(false);
   const [endDayNote, setEndDayNote] = useState("");
@@ -88,6 +113,9 @@ export default function DashboardHomeClient() {
 
   const summary = useMemo(() => buildSummary(tasks), [tasks]);
   const activeTask = tasks.find((task) => task.status === "In corso");
+  const activeTaskMessages = activeTask
+    ? activityMessages.filter((message) => message.taskCode === activeTask.code)
+    : [];
 
   function updateTaskStatus(
     taskCode: string,
@@ -136,11 +164,24 @@ export default function DashboardHomeClient() {
       selectedTask.status === "In stand-by"
     ) {
       updateTaskStatus(taskCode, "In corso");
+      setActivityMessages((currentMessages) => [
+        ...currentMessages,
+        createActivityEvent(
+          taskCode,
+          selectedTask.status === "In stand-by"
+            ? "Attività ripresa dallo stand-by."
+            : "Attività avviata.",
+        ),
+      ]);
       return;
     }
 
     if (selectedTask.status === "In corso") {
       updateTaskStatus(taskCode, "Completata");
+      setActivityMessages((currentMessages) => [
+        ...currentMessages,
+        createActivityEvent(taskCode, "Attività completata."),
+      ]);
     }
   }
 
@@ -158,11 +199,22 @@ export default function DashboardHomeClient() {
     }
 
     updateTaskStatus(standbyTask.code, "In stand-by", standbyInfo);
+    setActivityMessages((currentMessages) => [
+      ...currentMessages,
+      createActivityEvent(
+        standbyTask.code,
+        `Attività messa in stand-by: ${standbyInfo.reason}.`,
+      ),
+    ]);
     setStandbyTask(null);
   }
 
   function handleResumeTomorrow(taskCode: string) {
     updateTaskStatus(taskCode, "Da fare");
+    setActivityMessages((currentMessages) => [
+      ...currentMessages,
+      createActivityEvent(taskCode, "Attività lasciata da riprendere domani."),
+    ]);
   }
 
   function handleEndDayStandby(taskCode: string) {
@@ -177,6 +229,22 @@ export default function DashboardHomeClient() {
   function handleCloseDay() {
     setIsDayClosed(true);
     setIsEndDayOpen(false);
+  }
+
+  function handleSendActivityMessage(taskCode: string, body: string) {
+    const newMessage: ActivityMessage = {
+      id: `MSG-${Date.now()}`,
+      taskCode,
+      author: "Marco",
+      role: "Dipendente",
+      body,
+      createdAt: new Intl.DateTimeFormat("it-IT", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date()),
+    };
+
+    setActivityMessages((currentMessages) => [...currentMessages, newMessage]);
   }
 
   return (
@@ -199,8 +267,10 @@ export default function DashboardHomeClient() {
 
           <section className="grid gap-4 xl:grid-cols-[1.4fr_0.9fr]">
             <ActiveTaskCard
+              messages={activeTaskMessages}
               task={activeTask}
               onComplete={handleTaskAction}
+              onSendMessage={handleSendActivityMessage}
               onStandby={handleStandbyRequest}
             />
             <AiCard />

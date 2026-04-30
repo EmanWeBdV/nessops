@@ -1,15 +1,20 @@
-import type { Task } from "../../types/task";
+import type { ActivityMessage, Task } from "../../types/task";
+import ActivityChat from "./ActivityChat";
 import StatusBadge from "./StatusBadge";
 
 type ActiveTaskCardProps = {
+  messages: ActivityMessage[];
   task?: Task;
   onComplete: (taskCode: string) => void;
+  onSendMessage: (taskCode: string, body: string) => void;
   onStandby: (taskCode: string) => void;
 };
 
 export default function ActiveTaskCard({
+  messages,
   task,
   onComplete,
+  onSendMessage,
   onStandby,
 }: ActiveTaskCardProps) {
   if (!task) {
@@ -74,6 +79,12 @@ export default function ActiveTaskCard({
           Apri dettagli
         </button>
       </div>
+
+      <ActivityChat
+        messages={messages}
+        task={task}
+        onSendMessage={onSendMessage}
+      />
     </div>
   );
 }

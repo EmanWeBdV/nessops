@@ -24,6 +24,16 @@ export type StandbyInfo = {
   blockingTaskCode?: string;
 };
 
+export type ActivityMessage = {
+  id: string;
+  taskCode: string;
+  author: string;
+  role: string;
+  body: string;
+  createdAt: string;
+  kind?: "message" | "event";
+};
+
 export type Task = {
   title: string;
   code: string;
