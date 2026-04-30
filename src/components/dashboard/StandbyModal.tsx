@@ -52,6 +52,7 @@ export default function StandbyModal({
           </div>
 
           <button
+            type="button"
             className="rounded-2xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white/82 transition hover:bg-white/20"
             onClick={onClose}
           >
@@ -116,12 +117,14 @@ export default function StandbyModal({
 
         <div className="mt-6 flex flex-wrap justify-end gap-3">
           <button
+            type="button"
             className="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white/82 transition hover:bg-white/20"
             onClick={onClose}
           >
             Annulla
           </button>
           <button
+            type="button"
             className="rounded-2xl bg-amber-300 px-5 py-3 text-sm font-black text-[#061521] shadow-lg shadow-amber-300/20 transition hover:scale-[1.02]"
             onClick={handleSubmit}
           >

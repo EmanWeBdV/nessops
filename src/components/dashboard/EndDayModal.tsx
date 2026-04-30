@@ -1,5 +1,14 @@
-import type { Task } from "../../types/task";
+import type { Task, TaskStatus } from "../../types/task";
 import StatusBadge from "./StatusBadge";
+
+function getStatusVariant(status: TaskStatus) {
+  if (status === "In corso") return "progress" as const;
+  if (status === "In stand-by") return "standby" as const;
+  if (status === "Completata") return "completed" as const;
+  if (status === "Bloccata") return "blocked" as const;
+  if (status === "Annullata") return "cancelled" as const;
+  return "todo" as const;
+}
 
 type DaySummary = {
   completed: number;
@@ -71,18 +80,21 @@ export default function EndDayModal({
 
             <div className="mt-4 flex flex-wrap gap-3">
               <button
+                type="button"
                 className="rounded-2xl bg-white px-4 py-2.5 text-sm font-black text-[#061521] shadow-lg transition hover:scale-[1.02]"
                 onClick={() => onCompleteTask(activeTask.code)}
               >
                 Termina
               </button>
               <button
+                type="button"
                 className="rounded-2xl bg-amber-300 px-4 py-2.5 text-sm font-black text-[#061521] shadow-lg shadow-amber-300/20 transition hover:scale-[1.02]"
                 onClick={() => onStandbyTask(activeTask.code)}
               >
                 Stand-by
               </button>
               <button
+                type="button"
                 className="rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/82 transition hover:bg-white/20"
                 onClick={() => onResumeTomorrow(activeTask.code)}
               >
@@ -139,12 +151,14 @@ export default function EndDayModal({
 
         <div className="mt-6 flex flex-wrap justify-end gap-3">
           <button
+            type="button"
             className="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white/82 transition hover:bg-white/20"
             onClick={onClose}
           >
             Annulla
           </button>
           <button
+            type="button"
             className="rounded-2xl bg-gradient-to-r from-[#97B822] to-[#C6E94B] px-5 py-3 text-sm font-black text-[#061521] shadow-xl shadow-[#97B822]/25 transition enabled:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-45"
             disabled={!canCloseDay}
             onClick={onConfirmCloseDay}
@@ -179,9 +193,11 @@ function TaskGroup({
               className="rounded-2xl border border-white/10 bg-white/[0.07] p-3"
             >
               <p className="text-sm font-bold">{task.title}</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <StatusBadge label={task.code} variant="todo" />
-                <StatusBadge label={task.status} variant="todo" />
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white/50">
+                  {task.code}
+                </span>
+                <StatusBadge label={task.status} variant={getStatusVariant(task.status)} />
               </div>
             </div>
           ))

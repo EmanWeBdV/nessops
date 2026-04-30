@@ -1,14 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type {
   ActivityMessage,
   StandbyInfo,
   Task,
+  TaskAssignee,
   TaskStatus,
 } from "../../types/task";
 import {
   activityMessages as mockActivityMessages,
+  mockCurrentUser,
+  mockYesterdaySummary,
   tasks as mockTasks,
 } from "../../data/mockDashboard";
 import ActiveTaskCard from "./ActiveTaskCard";
@@ -18,28 +21,9 @@ import HeaderHero from "./HeaderHero";
 import Sidebar from "./Sidebar";
 import StandbyModal from "./StandbyModal";
 import SummaryCards from "./SummaryCards";
+import TaskDetailsModal from "./TaskDetailsModal";
 import TasksList from "./TasksList";
 import TopBar from "./TopBar";
-
-function getTaskAction(status: TaskStatus) {
-  if (status === "Da fare") {
-    return "Inizia";
-  }
-
-  if (status === "In stand-by") {
-    return "Riprendi";
-  }
-
-  if (status === "In corso") {
-    return "Termina";
-  }
-
-  if (status === "Completata") {
-    return "Completata";
-  }
-
-  return "Non disponibile";
-}
 
 function parseDuration(value = "0h 00m") {
   const hours = value.match(/(\d+)h/)?.[1] ?? "0";
@@ -102,20 +86,72 @@ function createActivityEvent(taskCode: string, body: string): ActivityMessage {
   };
 }
 
+function getMentionableUsers(tasks: Task[]) {
+  const users = new Map<string, TaskAssignee>();
+
+  tasks.forEach((task) => {
+    task.assignees.forEach((assignee) => users.set(assignee.id, assignee));
+    task.checklist.forEach((item) => {
+      item.assignees.forEach((assignee) => users.set(assignee.id, assignee));
+    });
+  });
+
+  return Array.from(users.values()).sort((first, second) =>
+    first.name.localeCompare(second.name),
+  );
+}
+
 export default function DashboardHomeClient() {
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
   const [activityMessages, setActivityMessages] =
     useState<ActivityMessage[]>(mockActivityMessages);
   const [standbyTask, setStandbyTask] = useState<Task | null>(null);
+  const [detailsTaskCode, setDetailsTaskCode] = useState<string | null>(null);
   const [isEndDayOpen, setIsEndDayOpen] = useState(false);
   const [endDayNote, setEndDayNote] = useState("");
   const [isDayClosed, setIsDayClosed] = useState(false);
+  const [activeTaskStartedAt, setActiveTaskStartedAt] = useState<number | null>(null);
+  const [liveElapsed, setLiveElapsed] = useState(0);
+  const [toast, setToast] = useState<{ message: string; kind: "success" | "info" } | null>(null);
 
   const summary = useMemo(() => buildSummary(tasks), [tasks]);
+  const mentionableUsers = useMemo(() => getMentionableUsers(tasks), [tasks]);
   const activeTask = tasks.find((task) => task.status === "In corso");
-  const activeTaskMessages = activeTask
-    ? activityMessages.filter((message) => message.taskCode === activeTask.code)
+  const detailsTask = detailsTaskCode
+    ? tasks.find((task) => task.code === detailsTaskCode)
+    : undefined;
+  const detailsTaskMessages = detailsTask
+    ? activityMessages.filter((message) => message.taskCode === detailsTask.code)
     : [];
+
+  const liveWorkTime = useMemo(() => {
+    if (!activeTask) return undefined;
+    const storedMinutes = parseDuration(activeTask.workTime ?? "0h 00m");
+    return formatDuration(storedMinutes + Math.floor(liveElapsed / 60));
+  }, [activeTask, liveElapsed]);
+
+  useEffect(() => {
+    if (activeTask?.code) {
+      setActiveTaskStartedAt(Date.now());
+      setLiveElapsed(0);
+    } else {
+      setActiveTaskStartedAt(null);
+      setLiveElapsed(0);
+    }
+  }, [activeTask?.code]);
+
+  useEffect(() => {
+    if (!activeTaskStartedAt) return;
+    const id = setInterval(() => {
+      setLiveElapsed(Math.floor((Date.now() - activeTaskStartedAt) / 1_000));
+    }, 1_000);
+    return () => clearInterval(id);
+  }, [activeTaskStartedAt]);
+
+  function showToast(message: string, kind: "success" | "info" = "info") {
+    setToast({ message, kind });
+    setTimeout(() => setToast(null), 3_000);
+  }
 
   function updateTaskStatus(
     taskCode: string,
@@ -128,18 +164,13 @@ export default function DashboardHomeClient() {
           return {
             ...task,
             status: nextStatus,
-            action: getTaskAction(nextStatus),
             standbyInfo:
               nextStatus === "In stand-by" ? standbyInfo : undefined,
           };
         }
 
         if (nextStatus === "In corso" && task.status === "In corso") {
-          return {
-            ...task,
-            status: "Da fare",
-            action: getTaskAction("Da fare"),
-          };
+          return { ...task, status: "Da fare" };
         }
 
         return task;
@@ -163,16 +194,16 @@ export default function DashboardHomeClient() {
       selectedTask.status === "Da fare" ||
       selectedTask.status === "In stand-by"
     ) {
+      const isResume = selectedTask.status === "In stand-by";
       updateTaskStatus(taskCode, "In corso");
       setActivityMessages((currentMessages) => [
         ...currentMessages,
         createActivityEvent(
           taskCode,
-          selectedTask.status === "In stand-by"
-            ? "Attività ripresa dallo stand-by."
-            : "Attività avviata.",
+          isResume ? "Attività ripresa dallo stand-by." : "Attività avviata.",
         ),
       ]);
+      showToast(isResume ? "Attività ripresa." : "Attività avviata.");
       return;
     }
 
@@ -182,6 +213,7 @@ export default function DashboardHomeClient() {
         ...currentMessages,
         createActivityEvent(taskCode, "Attività completata."),
       ]);
+      showToast("Attività completata!", "success");
     }
   }
 
@@ -206,6 +238,7 @@ export default function DashboardHomeClient() {
         `Attività messa in stand-by: ${standbyInfo.reason}.`,
       ),
     ]);
+    showToast("Attività in stand-by.");
     setStandbyTask(null);
   }
 
@@ -231,13 +264,57 @@ export default function DashboardHomeClient() {
     setIsEndDayOpen(false);
   }
 
-  function handleSendActivityMessage(taskCode: string, body: string) {
+  function handleToggleChecklistItem(taskCode: string, checklistItemId: string) {
+    const selectedTask = tasks.find((task) => task.code === taskCode);
+    const selectedItem = selectedTask?.checklist.find(
+      (item) => item.id === checklistItemId,
+    );
+
+    if (!selectedItem) {
+      return;
+    }
+
+    setTasks((currentTasks) =>
+      currentTasks.map((task) => {
+        if (task.code !== taskCode) {
+          return task;
+        }
+
+        return {
+          ...task,
+          checklist: task.checklist.map((item) =>
+            item.id === checklistItemId
+              ? { ...item, completed: !item.completed }
+              : item,
+          ),
+        };
+      }),
+    );
+
+    setActivityMessages((currentMessages) => [
+      ...currentMessages,
+      createActivityEvent(
+        taskCode,
+        selectedItem.completed
+          ? `Sotto-task riaperta: ${selectedItem.title}.`
+          : `Sotto-task completata: ${selectedItem.title}.`,
+      ),
+    ]);
+  }
+
+  function handleSendActivityMessage(
+    taskCode: string,
+    body: string,
+    mentions: TaskAssignee[],
+  ) {
     const newMessage: ActivityMessage = {
       id: `MSG-${Date.now()}`,
       taskCode,
-      author: "Marco",
-      role: "Dipendente",
+      authorId: mockCurrentUser.id,
+      author: mockCurrentUser.name,
+      role: mockCurrentUser.role,
       body,
+      mentions,
       createdAt: new Intl.DateTimeFormat("it-IT", {
         hour: "2-digit",
         minute: "2-digit",
@@ -249,34 +326,38 @@ export default function DashboardHomeClient() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#061521] text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,_rgba(1,102,164,0.42),_transparent_32%),radial-gradient(circle_at_85%_20%,_rgba(151,184,34,0.22),_transparent_28%),radial-gradient(circle_at_50%_100%,_rgba(1,102,164,0.22),_transparent_35%)]" />
-      <div className="absolute left-[-160px] top-[-120px] h-[430px] w-[430px] rounded-full bg-[#0166A4]/30 blur-3xl" />
-      <div className="absolute right-[-160px] top-[120px] h-[360px] w-[360px] rounded-full bg-[#97B822]/20 blur-3xl" />
-      <div className="absolute bottom-[-220px] left-[35%] h-[420px] w-[420px] rounded-full bg-white/10 blur-3xl" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,_rgba(1,102,164,0.22),_transparent_32%),radial-gradient(circle_at_85%_20%,_rgba(151,184,34,0.08),_transparent_28%),radial-gradient(circle_at_50%_100%,_rgba(1,102,164,0.12),_transparent_35%)]" />
+      <div className="absolute left-[-160px] top-[-120px] h-[430px] w-[430px] rounded-full bg-[#0166A4]/[0.18] blur-3xl" />
+      <div className="absolute bottom-[-220px] left-[35%] h-[420px] w-[420px] rounded-full bg-white/[0.05] blur-3xl" />
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-[1500px] gap-6 p-6">
         <Sidebar />
 
-        <section className="flex-1 space-y-6">
+        <section className="flex-1 space-y-8">
           <TopBar />
           <HeaderHero
             isDayClosed={isDayClosed}
+            userName={mockCurrentUser.name}
             onEndDay={() => setIsEndDayOpen(true)}
           />
-          <SummaryCards summary={summary} />
+          <SummaryCards summary={summary} yesterday={mockYesterdaySummary} />
 
-          <section className="grid gap-4 xl:grid-cols-[1.4fr_0.9fr]">
+          <section className="grid gap-4 xl:grid-cols-[1fr_300px]">
             <ActiveTaskCard
-              messages={activeTaskMessages}
               task={activeTask}
+              liveWorkTime={liveWorkTime}
               onComplete={handleTaskAction}
-              onSendMessage={handleSendActivityMessage}
+              onOpenDetails={setDetailsTaskCode}
               onStandby={handleStandbyRequest}
             />
             <AiCard />
           </section>
 
-          <TasksList tasks={tasks} onTaskAction={handleTaskAction} />
+          <TasksList
+            tasks={tasks}
+            onOpenTaskDetails={setDetailsTaskCode}
+            onTaskAction={handleTaskAction}
+          />
         </section>
       </div>
 
@@ -286,6 +367,17 @@ export default function DashboardHomeClient() {
           tasks={tasks}
           onClose={() => setStandbyTask(null)}
           onConfirm={handleStandbyConfirm}
+        />
+      ) : null}
+
+      {detailsTask ? (
+        <TaskDetailsModal
+          mentionableUsers={mentionableUsers}
+          messages={detailsTaskMessages}
+          task={detailsTask}
+          onClose={() => setDetailsTaskCode(null)}
+          onSendMessage={handleSendActivityMessage}
+          onToggleChecklistItem={handleToggleChecklistItem}
         />
       ) : null}
 
@@ -302,6 +394,18 @@ export default function DashboardHomeClient() {
           onResumeTomorrow={handleResumeTomorrow}
           onStandbyTask={handleEndDayStandby}
         />
+      ) : null}
+
+      {toast ? (
+        <div
+          className={`fixed right-6 top-6 z-[60] rounded-2xl border px-5 py-3 text-sm font-bold shadow-2xl backdrop-blur-xl ${
+            toast.kind === "success"
+              ? "border-[#97B822]/40 bg-[#97B822]/20 text-[#E6F6A8]"
+              : "border-white/20 bg-white/[0.15] text-white"
+          }`}
+        >
+          {toast.message}
+        </div>
       ) : null}
     </main>
   );

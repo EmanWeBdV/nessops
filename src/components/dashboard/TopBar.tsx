@@ -16,7 +16,7 @@ export default function TopBar() {
         </div>
       </div>
 
-      <button className="rounded-2xl bg-gradient-to-r from-[#97B822] to-[#C6E94B] px-4 py-2.5 text-sm font-black text-[#061521] shadow-xl shadow-[#97B822]/25">
+      <button type="button" className="rounded-2xl border border-[#0166A4]/50 bg-[#0166A4]/25 px-4 py-2.5 text-sm font-semibold text-white/90 transition hover:bg-[#0166A4]/35 hover:text-white">
         Menu
       </button>
     </div>

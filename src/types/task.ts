@@ -8,6 +8,28 @@ export type TaskStatus =
 
 export type TaskPriority = "Bassa" | "Media" | "Alta";
 
+export type TaskSector =
+  | "Ingegneria Esterna"
+  | "Area Sviluppo"
+  | "Area Operation"
+  | "Sicurezza"
+  | "Area Legale"
+  | "Permitting"
+  | "Amministrazione"
+  | "GM"
+  | "Progettazione esterna"
+  | "Comunicazione e marketing"
+  | "R&S e Gare"
+  | "ASPI";
+
+export type TaskAssignee = {
+  id: string;
+  name: string;
+  role: string;
+  avatarUrl?: string;
+  avatarColor?: string;
+};
+
 export type StandbyReason =
   | "attesa cliente"
   | "attesa amministrazione"
@@ -27,11 +49,20 @@ export type StandbyInfo = {
 export type ActivityMessage = {
   id: string;
   taskCode: string;
+  authorId?: string;
   author: string;
   role: string;
   body: string;
   createdAt: string;
   kind?: "message" | "event";
+  mentions?: TaskAssignee[];
+};
+
+export type TaskChecklistItem = {
+  id: string;
+  title: string;
+  completed: boolean;
+  assignees: TaskAssignee[];
 };
 
 export type Task = {
@@ -39,11 +70,14 @@ export type Task = {
   code: string;
   status: TaskStatus;
   priority: TaskPriority;
-  action: string;
-  accent: string;
   description?: string;
   workTime?: string;
   standbyTime?: string;
   blockedTime?: string;
   standbyInfo?: StandbyInfo;
+  assignees: TaskAssignee[];
+  assignedAt: string;
+  dueDate: string;
+  sectors: TaskSector[];
+  checklist: TaskChecklistItem[];
 };
