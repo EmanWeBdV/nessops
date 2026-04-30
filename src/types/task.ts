@@ -1,4 +1,10 @@
-export type TaskStatus = "Da fare" | "In corso" | "Stand-by" | "Completata";
+export type TaskStatus =
+  | "Da fare"
+  | "In corso"
+  | "In stand-by"
+  | "Bloccata"
+  | "Completata"
+  | "Annullata";
 
 export type TaskPriority = "Bassa" | "Media" | "Alta";
 
@@ -9,4 +15,6 @@ export type Task = {
   priority: TaskPriority;
   action: string;
   accent: string;
+  description?: string;
+  workTime?: string;
 };

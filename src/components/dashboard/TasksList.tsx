@@ -1,8 +1,28 @@
-import { tasks } from "../../data/mockDashboard";
+import type { Task, TaskStatus } from "../../types/task";
 import StatusBadge from "./StatusBadge";
 
+type TasksListProps = {
+  tasks: Task[];
+  onTaskAction: (taskCode: string) => void;
+};
 
-export default function TasksList() {
+function getStatusVariant(status: TaskStatus) {
+  if (status === "In corso") {
+    return "progress";
+  }
+
+  if (status === "In stand-by") {
+    return "standby";
+  }
+
+  if (status === "Completata") {
+    return "completed";
+  }
+
+  return "todo";
+}
+
+export default function TasksList({ tasks, onTaskAction }: TasksListProps) {
   return (
     <section className="rounded-[2rem] border border-white/15 bg-white/[0.10] p-6 shadow-2xl shadow-black/20 backdrop-blur-2xl">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -35,35 +55,31 @@ export default function TasksList() {
                   </span>
                 </div>
 
-                <div className="mt-1 text-sm text-white/50">
-                      <StatusBadge
-    label={task.status}
-    variant={
-      task.status === "In corso"
-        ? "progress"
-        : task.status === "Stand-by"
-          ? "standby"
-          : task.status === "Completata"
-            ? "completed"
-            : "todo"
-    }
-  />
+                <div className="mt-1 flex flex-wrap gap-2 text-sm text-white/50">
+                  <StatusBadge
+                    label={task.status}
+                    variant={getStatusVariant(task.status)}
+                  />
 
-  <StatusBadge
-    label={`Priorità ${task.priority}`}
-    variant={
-      task.priority === "Alta"
-        ? "high"
-        : task.priority === "Media"
-          ? "medium"
-          : "low"
-    }
-  />
+                  <StatusBadge
+                    label={`Priorità ${task.priority}`}
+                    variant={
+                      task.priority === "Alta"
+                        ? "high"
+                        : task.priority === "Media"
+                          ? "medium"
+                          : "low"
+                    }
+                  />
                 </div>
               </div>
             </div>
 
-            <button className="rounded-2xl bg-white px-4 py-2 text-sm font-black text-[#061521] shadow-lg transition group-hover:scale-[1.02]">
+            <button
+              className="rounded-2xl bg-white px-4 py-2 text-sm font-black text-[#061521] shadow-lg transition enabled:group-hover:scale-[1.02] disabled:cursor-not-allowed disabled:bg-white/40"
+              disabled={task.status === "Completata"}
+              onClick={() => onTaskAction(task.code)}
+            >
               {task.action}
             </button>
           </div>
