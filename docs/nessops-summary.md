@@ -22,6 +22,8 @@ attivita operative e richieste tra direzione, capi BU e dipendenti;
 
 dashboard giornaliera personale;
 
+agenda giornaliera con eventi Outlook/Teams in futuro;
+
 tracciamento lavoro con start, stand-by, riprendi e termina;
 
 riepilogo di fine giornata;
@@ -36,7 +38,7 @@ integrazione con servizi comuni del Gate 236 tramite GateHub;
 
 ruoli, permessi, audit e amministrazione sistema.
 Frase madre:NessOps e il portale unico interno di Ness che organizza attivita, processi, richieste, HR, AI e servizi aziendali in base al ruolo di ogni utente. 2. Obiettivo principale
-L'obiettivo e creare un sistema aziendale che permetta di sapere cosa deve fare ogni persona durante la giornata, assegnare attivita in modo ordinato, seguire l'avanzamento, distinguere il tempo effettivo di lavoro dai tempi di attesa e ridurre dispersione tra Planner, chat, email e file sparsi.
+L'obiettivo e creare un sistema aziendale che permetta di sapere cosa deve fare ogni persona durante la giornata, assegnare attivita in modo ordinato, seguire l'avanzamento, distinguere il tempo effettivo di lavoro dai tempi di attesa, vedere gli eventi principali del calendario aziendale e ridurre dispersione tra Planner, chat, email, calendario e file sparsi.
 
 capire cosa e urgente e cosa e fermo;
 
@@ -70,7 +72,7 @@ non deve decidere automaticamente ferie, approvazioni, paghe o valutazioni. 4. F
 NessOps deve essere costruito come un portale unico composto da moduli separati. Ogni modulo ha una responsabilita precisa, ma condivide utenti, permessi, notifiche, documenti, audit e UI comune.
 NessOps├── Home personale
 NessOps - Riassunto completo del progetto
-├── Operations├── HR├── AI Assistant├── Case Memory├── Fleet├── Documenti├── Comunicazioni├── Admin└── Integrazione GateHub
+├── Operations├── Agenda Microsoft 365├── HR├── AI Assistant├── Case Memory├── Fleet├── Documenti├── Comunicazioni├── Admin└── Integrazione GateHub
 4.2 Unico accesso
 L'utente deve accedere una sola volta e vedere solo i servizi autorizzati in base ai propri ruoli.
 Login NessOps↓Home personale↓Moduli disponibili in base ai ruoli
@@ -113,6 +115,8 @@ comunicazioni da leggere;
 documenti recenti;
 
 promemoria, riunioni o sale prenotate;
+
+agenda Outlook/Teams in futuro tramite Microsoft Graph;
 
 accesso rapido all'AI;
 
@@ -519,6 +523,8 @@ UI: Tailwind CSS e shadcn/ui in futuro
 
 Auth: fase iniziale mock/login base; versione aziendale SSO Microsoft/Entra ID
 
+Microsoft 365: integrazione futura con Microsoft Graph Calendar per eventi Outlook/Teams in Home. Prima va prototipata una card Agenda mock; poi, quando login e permessi saranno chiari, si potra leggere il calendario utente con permesso minimo Calendars.ReadBasic. Calendars.Read va usato solo se servono dettagli completi degli eventi.
+
 Storage: server aziendale o object storage privato
 
 AI: servizio separato; prompt guidati; in futuro RAG/Case Memory/AI interna o ibrida
@@ -585,6 +591,8 @@ database;
 
 autenticazione reale;
 
+integrazione reale Microsoft Graph / calendario Outlook;
+
 ruoli reali;
 
 documenti;
@@ -607,15 +615,19 @@ Fase 5 - Login e ruoli: login reale, ruoli multipli, permessi, dashboard persona
 
 Fase 6 - Dashboard capo BU: richieste operative, attivita reparto, attivita bloccate, assegnazione attivita.
 
-Fase 7 - Fine giornata: riepilogo completo, controllo attivita in corso, storico giornaliero.
+Fase 7 - Agenda mock in Home: card Agenda oggi con eventi finti, prossime riunioni e CTA calendario, senza login reale e senza Microsoft Graph.
 
-Fase 8 - AI Assistant base: prompt guidati, cerca casi simili mock, checklist, nota stand-by, log richieste AI.
+Fase 8 - Microsoft Entra ID e Graph Calendar: login aziendale, lettura calendario utente Outlook/Teams tramite Microsoft Graph, eventi reali in Home, permessi minimi e privacy.
 
-Fase 9 - HR: ferie, permessi, malattia, fuori sede, workflow, documenti, TimeStudio, anomalie, export.
+Fase 9 - Fine giornata: riepilogo completo, controllo attivita in corso, storico giornaliero.
 
-Fase 10 - Fleet: veicoli, prenotazioni, scadenze, segnalazioni.
+Fase 10 - AI Assistant base: prompt guidati, cerca casi simili mock, checklist, nota stand-by, log richieste AI.
 
-Fase 11 - GateHub: piattaforma sale, booking, calendario, API e integrazione in NessOps. 26. Priorita attuale di sviluppo
+Fase 11 - HR: ferie, permessi, malattia, fuori sede, workflow, documenti, TimeStudio, anomalie, export.
+
+Fase 12 - Fleet: veicoli, prenotazioni, scadenze, segnalazioni.
+
+Fase 13 - GateHub: piattaforma sale, booking, calendario, API e integrazione in NessOps. 26. Priorita attuale di sviluppo
 
 stabilizzare UI Home;
 
@@ -628,9 +640,11 @@ aggiungere modal stand-by;
 simulare cambio stato attivita;
 
 creare schermata Fine giornata.
-Non bisogna ancora lavorare su database, backend, HR, AI reale, TimeStudio, Fleet o GateHub. 27. Regola anti-overload
+
+prototipare Agenda Home con dati mock.
+Non bisogna ancora lavorare su database, backend, HR, AI reale, TimeStudio, Fleet, GateHub o integrazione reale Microsoft Graph. 27. Regola anti-overload
 Il progetto va affrontato un modulo alla volta, una schermata alla volta, una funzione alla volta. Ogni nuova idea va parcheggiata nella specifica, non implementata subito.
-Ordine mentale:Home↓Operations↓Fine giornata↓Capo BU↓HR
+Ordine mentale:Home↓Operations↓Fine giornata↓Capo BU↓Agenda mock↓Microsoft 365 Graph Calendar↓HR
 NessOps - Riassunto completo del progetto
 ↓AI↓Fleet↓GateHub 28. Frase finale da tenere come bussola
-NessOps sara il sistema operativo interno di Ness: un portale modulare, moderno e intelligente che centralizza attivita, richieste, HR, documenti, AI e servizi aziendali, mostrando a ogni utente solo cio che gli serve per lavorare meglio.Prima costruiamo il cuore: Home personale, attivita, start/stand-by/termina e fine giornata. Poi aggiungiamo HR, AI, Fleet e GateHub.
+NessOps sara il sistema operativo interno di Ness: un portale modulare, moderno e intelligente che centralizza attivita, agenda, richieste, HR, documenti, AI e servizi aziendali, mostrando a ogni utente solo cio che gli serve per lavorare meglio.Prima costruiamo il cuore: Home personale, attivita, start/stand-by/termina e fine giornata. Poi aggiungiamo agenda Microsoft 365, HR, AI, Fleet e GateHub.

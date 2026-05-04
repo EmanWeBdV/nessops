@@ -61,6 +61,7 @@ Non implementare ancora:
 - NestJS
 - login reale
 - Microsoft Entra ID / SSO
+- integrazione reale Microsoft Graph / calendario Outlook
 - HR completo
 - TimeStudio
 - export consulente
@@ -274,6 +275,7 @@ Da migliorare:
 - mock attività
 - mock riepilogo ieri
 - mock comunicazioni
+- mock agenda/calendario
 - mock richieste HR leggere
 - mock tempi attività
 - mock motivi stand-by
@@ -324,7 +326,35 @@ Criteri di completamento:
 
 ---
 
-## Fase 7 — Preparazione database futuro
+## Fase 7 — Agenda mock in Home
+
+Obiettivo:
+validare UX e posizione della agenda giornaliera prima di introdurre autenticazione reale.
+
+Funzioni:
+
+- card "Agenda oggi" in Home
+- prossimi eventi mock
+- orario, titolo, luogo/canale
+- evidenza prossimo evento
+- CTA verso calendario o vista agenda futura
+
+Regole:
+
+- nessuna integrazione reale Microsoft in questa fase
+- nessun token, nessun login reale
+- dati mock/locali
+- la Home resta sintetica e non diventa un calendario completo
+
+Criteri di completamento:
+
+- la Home mostra attività in corso e agenda senza sovraccarico
+- gli eventi sono tipizzati
+- la UI è coerente con la dashboard dark clean
+
+---
+
+## Fase 8 — Preparazione database futuro
 
 Obiettivo:
 solo progettare lo schema, non implementarlo subito.
@@ -340,6 +370,7 @@ Entità probabili:
 - StandByReason
 - OperationalRequest
 - DailySummary
+- CalendarEvent
 - AuditLog
 
 Nota:
@@ -347,7 +378,7 @@ questa fase non va iniziata finché Home, Operations, Stand-by e Fine giornata n
 
 ---
 
-## Fase 8 — Backend futuro
+## Fase 9 — Backend futuro
 
 Obiettivo:
 introdurre backend solo quando il prototipo frontend è stabile.
@@ -369,6 +400,7 @@ Moduli backend futuri:
 - fleet
 - documents
 - notifications
+- calendar
 - ai
 - audit
 - admin
@@ -378,7 +410,49 @@ non creare backend durante le prime fasi frontend.
 
 ---
 
-## Fase 9 — AI Assistant base
+## Fase 10 — Microsoft Entra ID e Graph Calendar
+
+Obiettivo:
+integrare account aziendali Microsoft e calendario Outlook/Teams quando il prototipo frontend è stabile e la direzione dati è chiara.
+
+Funzioni:
+
+- login aziendale con Microsoft Entra ID / SSO
+- lettura calendario utente tramite Microsoft Graph
+- eventi della giornata nella Home
+- prossime riunioni e blocchi calendario
+- supporto a riunioni Teams e appuntamenti Outlook
+
+Permessi:
+
+- preferire Calendars.ReadBasic per leggere informazioni essenziali
+- usare Calendars.Read solo se servono dettagli completi
+- evitare permessi application-wide finché non serve accesso a calendari reparto o condivisi
+- valutare admin consent e policy aziendali prima della produzione
+
+API previste:
+
+- Microsoft Graph calendarView
+- GET /me/calendarView?startDateTime={start}&endDateTime={end}
+
+Regole:
+
+- non leggere corpo evento o allegati se non necessario
+- rispettare privacy degli utenti
+- separare eventi personali, eventi reparto e dati Operations
+- non usare il calendario per controllo dipendenti
+
+Criteri di completamento:
+
+- login Microsoft funzionante
+- eventi giornalieri mostrati in Home
+- fallback se Graph non risponde
+- permessi documentati
+- nessuna esposizione impropria di dati calendario
+
+---
+
+## Fase 11 — AI Assistant base
 
 Obiettivo:
 creare un assistente AI controllato, non una chat libera.
@@ -399,7 +473,7 @@ l'AI aiuta, ma non decide.
 
 ---
 
-## Fase 10 — HR
+## Fase 12 — HR
 
 Obiettivo:
 aggiungere il portale HR interno.
@@ -423,7 +497,7 @@ HR non sostituisce TimeStudio, la timbratura, la consulente del lavoro o il calc
 
 ---
 
-## Fase 11 — Fleet
+## Fase 13 — Fleet
 
 Obiettivo:
 gestire le auto aziendali.
@@ -443,7 +517,7 @@ Funzioni future:
 
 ---
 
-## Fase 12 — GateHub
+## Fase 14 — GateHub
 
 Obiettivo:
 integrare servizi condivisi del Gate 236 senza inglobarli totalmente in NessOps.
@@ -466,7 +540,7 @@ Funzioni future GateHub:
 
 ---
 
-## Fase 13 — Sicurezza, audit e permessi
+## Fase 15 — Sicurezza, audit e permessi
 
 Obiettivo:
 rendere il sistema adatto a un contesto aziendale reale.
@@ -506,8 +580,10 @@ In questo momento bisogna lavorare su:
 4. aggiungere modal Stand-by
 5. simulare cambio stato attività
 6. creare schermata Fine giornata
+7. prototipare Agenda Home con dati mock
+8. solo dopo valutare Microsoft Entra/Graph reale
 
-Non lavorare ancora su backend, database, HR, AI reale, TimeStudio, Fleet o GateHub.
+Non lavorare ancora su backend, database, HR, AI reale, TimeStudio, Fleet, GateHub o integrazione reale Microsoft Graph.
 
 ---
 
@@ -522,9 +598,9 @@ Poi analizza src/app/page.tsx, src/data/mockDashboard.ts, src/types/task.ts e i 
 
 Considera questi file come contesto principale del progetto NessOps.
 
-Non implementare backend, database, HR, AI reale, Fleet o GateHub.
+Non implementare backend, database, HR, AI reale, Fleet, GateHub o integrazione reale Microsoft Graph.
 
-Lavoriamo solo su Home, Operations, attività mock, stand-by e Fine giornata.
+Lavoriamo solo su Home, Operations, attività mock, stand-by, Fine giornata ed eventuale Agenda mock.
 
 Prima dimmi quali file modificheresti e perché. Poi procedi con modifiche mirate.
 ```

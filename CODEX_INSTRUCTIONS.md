@@ -44,6 +44,7 @@ Non lavorare ancora su:
 - AI avanzata
 - Case Memory completa
 - autenticazione reale
+- integrazione reale Microsoft Graph / calendario Outlook
 - ruoli reali persistenti
 - documenti reali
 - report avanzati
@@ -80,6 +81,14 @@ ORM futuro:
 Auth futura:
 
 - Microsoft Entra ID / SSO
+
+Microsoft 365 futura:
+
+- Microsoft Graph
+- calendario Outlook/Teams in Home
+- eventi giornalieri e prossime riunioni
+- preferire Calendars.ReadBasic per leggere solo dati essenziali degli eventi
+- usare Calendars.Read solo se servono dettagli completi
 
 AI futura:
 
@@ -211,10 +220,12 @@ Ordine mentale:
 2. Operations
 3. Fine giornata
 4. Capo BU
-5. HR
-6. AI
-7. Fleet
-8. GateHub
+5. Agenda mock in Home
+6. Microsoft Entra/Graph Calendar reale
+7. HR
+8. AI
+9. Fleet
+10. GateHub
 
 Non anticipare moduli futuri se non servono alla feature richiesta.
 

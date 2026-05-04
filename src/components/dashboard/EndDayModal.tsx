@@ -52,16 +52,18 @@ export default function EndDayModal({
   const canCloseDay = !activeTask;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#061521]/80 p-4 backdrop-blur-xl">
-      <div className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] border border-white/15 bg-[#0B2233]/95 p-6 shadow-2xl shadow-black/40">
-        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#07131E]/82 p-4 backdrop-blur-xl">
+      <div className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-[1.75rem] border border-white/[0.08] bg-[#0A1A28]/95 p-6 shadow-xl shadow-black/28">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
-            <p className="text-sm text-white/50">Riepilogo operativo</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-white/38">
+              Riepilogo operativo
+            </p>
             <h2 className="mt-2 text-2xl font-black">Fine giornata</h2>
           </div>
 
           <button
-            className="rounded-2xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white/82 transition hover:bg-white/20"
+            className="rounded-2xl border border-white/[0.08] bg-white/[0.035] px-4 py-2 text-sm font-semibold text-white/62 transition hover:bg-white/[0.07] hover:text-white/84"
             onClick={onClose}
           >
             Chiudi
@@ -69,33 +71,33 @@ export default function EndDayModal({
         </div>
 
         {activeTask ? (
-          <div className="mt-6 rounded-3xl border border-amber-300/35 bg-amber-300/15 p-4">
+          <div className="mt-6 rounded-2xl border border-amber-300/18 bg-amber-300/[0.06] p-4">
             <p className="text-sm font-bold text-amber-100">
               C&apos;è ancora un&apos;attività in corso
             </p>
             <h3 className="mt-2 text-lg font-black">{activeTask.title}</h3>
-            <p className="mt-1 text-sm text-white/65">
+            <p className="mt-1 text-sm text-white/58">
               Prima di chiudere la giornata scegli come gestirla.
             </p>
 
             <div className="mt-4 flex flex-wrap gap-3">
               <button
                 type="button"
-                className="rounded-2xl bg-white px-4 py-2.5 text-sm font-black text-[#061521] shadow-lg transition hover:scale-[1.02]"
+                className="rounded-2xl bg-white px-4 py-2.5 text-sm font-black text-[#061521] shadow-sm transition hover:bg-white/90"
                 onClick={() => onCompleteTask(activeTask.code)}
               >
                 Termina
               </button>
               <button
                 type="button"
-                className="rounded-2xl bg-amber-300 px-4 py-2.5 text-sm font-black text-[#061521] shadow-lg shadow-amber-300/20 transition hover:scale-[1.02]"
+                className="rounded-2xl border border-amber-300/25 bg-amber-300/14 px-4 py-2.5 text-sm font-bold text-amber-100 transition hover:bg-amber-300/20"
                 onClick={() => onStandbyTask(activeTask.code)}
               >
                 Stand-by
               </button>
               <button
                 type="button"
-                className="rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/82 transition hover:bg-white/20"
+                className="rounded-2xl border border-white/[0.08] bg-white/[0.035] px-4 py-2.5 text-sm font-semibold text-white/62 transition hover:bg-white/[0.07] hover:text-white/84"
                 onClick={() => onResumeTomorrow(activeTask.code)}
               >
                 Riprendi domani
@@ -105,15 +107,15 @@ export default function EndDayModal({
         ) : null}
 
         <div className="mt-6 grid gap-3 md:grid-cols-3">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.08] p-4">
+          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4">
             <p className="text-xs text-white/45">Tempo effettivo</p>
             <p className="mt-1 text-xl font-black">{summary.workTime}</p>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-white/[0.08] p-4">
+          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4">
             <p className="text-xs text-white/45">Tempo stand-by</p>
             <p className="mt-1 text-xl font-black">{summary.standbyTime}</p>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-white/[0.08] p-4">
+          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4">
             <p className="text-xs text-white/45">Tempo bloccato</p>
             <p className="mt-1 text-xl font-black">{summary.blockedTime}</p>
           </div>
@@ -138,11 +140,11 @@ export default function EndDayModal({
         </div>
 
         <label className="mt-6 grid gap-2">
-          <span className="text-sm font-semibold text-white/75">
+          <span className="text-sm font-semibold text-white/68">
             Note finali
           </span>
           <textarea
-            className="min-h-28 resize-none rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm leading-6 text-white outline-none placeholder:text-white/35"
+            className="min-h-28 resize-none rounded-2xl border border-white/[0.08] bg-white/[0.045] px-4 py-3 text-sm leading-6 text-white/82 outline-none placeholder:text-white/32 transition focus:border-[#0166A4]/35"
             placeholder="Aggiungi eventuali note per riprendere il contesto domani."
             value={endDayNote}
             onChange={(event) => onNoteChange(event.target.value)}
@@ -152,14 +154,14 @@ export default function EndDayModal({
         <div className="mt-6 flex flex-wrap justify-end gap-3">
           <button
             type="button"
-            className="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white/82 transition hover:bg-white/20"
+            className="rounded-2xl border border-white/[0.08] bg-white/[0.035] px-5 py-3 text-sm font-semibold text-white/62 transition hover:bg-white/[0.07] hover:text-white/84"
             onClick={onClose}
           >
             Annulla
           </button>
           <button
             type="button"
-            className="rounded-2xl bg-gradient-to-r from-[#97B822] to-[#C6E94B] px-5 py-3 text-sm font-black text-[#061521] shadow-xl shadow-[#97B822]/25 transition enabled:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-45"
+            className="rounded-2xl bg-[#97B822] px-5 py-3 text-sm font-black text-[#061521] shadow-sm shadow-[#97B822]/10 transition enabled:hover:bg-[#a8cc27] disabled:cursor-not-allowed disabled:opacity-45"
             disabled={!canCloseDay}
             onClick={onConfirmCloseDay}
           >
@@ -181,7 +183,7 @@ function TaskGroup({
   title: string;
 }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-4">
+    <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-4">
       <h3 className="font-black">{title}</h3>
       <div className="mt-3 space-y-2">
         {tasks.length === 0 ? (
@@ -190,11 +192,11 @@ function TaskGroup({
           tasks.map((task) => (
             <div
               key={task.code}
-              className="rounded-2xl border border-white/10 bg-white/[0.07] p-3"
+              className="rounded-2xl border border-white/[0.06] bg-black/[0.06] p-3"
             >
               <p className="text-sm font-bold">{task.title}</p>
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white/50">
+                <span className="rounded-full bg-white/[0.045] px-2.5 py-0.5 font-mono text-xs font-semibold text-white/42">
                   {task.code}
                 </span>
                 <StatusBadge label={task.status} variant={getStatusVariant(task.status)} />

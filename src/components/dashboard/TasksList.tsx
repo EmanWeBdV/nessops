@@ -36,12 +36,12 @@ function getStatusVariant(status: TaskStatus) {
 }
 
 function getAccentClass(status: TaskStatus): string {
-  if (status === "In corso") return "bg-[#0166A4]";
-  if (status === "In stand-by") return "bg-amber-400";
-  if (status === "Bloccata") return "bg-red-400";
-  if (status === "Completata") return "bg-[#97B822]";
-  if (status === "Annullata") return "bg-white/20";
-  return "bg-[#97B822]";
+  if (status === "In corso") return "bg-[#0166A4]/80";
+  if (status === "In stand-by") return "bg-amber-300/70";
+  if (status === "Bloccata") return "bg-red-300/70";
+  if (status === "Completata") return "bg-[#97B822]/75";
+  if (status === "Annullata") return "bg-white/16";
+  return "bg-white/18";
 }
 
 function getTaskLabel(status: TaskStatus): string {
@@ -128,10 +128,10 @@ export default function TasksList({
   );
 
   return (
-    <section className="rounded-[2rem] border border-white/15 bg-white/[0.10] p-6 shadow-2xl shadow-black/20 backdrop-blur-2xl">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <section className="rounded-[1.75rem] border border-white/[0.08] bg-white/[0.045] p-6 shadow-sm shadow-black/10 backdrop-blur-xl">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-2xl font-black">Le mie attività di oggi</h2>
+          <h2 className="text-[1.55rem] font-black">Le mie attività di oggi</h2>
           <p className="mt-1 text-sm text-white/55">
             Una vista pulita delle attività assegnate alla tua giornata.
           </p>
@@ -140,7 +140,7 @@ export default function TasksList({
         <div className="flex flex-col gap-2 sm:flex-row">
           <select
             aria-label="Filtra per settore"
-            className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white/82 outline-none"
+            className="rounded-2xl border border-white/[0.08] bg-white/[0.045] px-4 py-3 text-sm font-semibold text-white/72 outline-none transition focus:border-[#0166A4]/35"
             value={selectedSector}
             onChange={(event) =>
               setSelectedSector(event.target.value as TaskSector | "all")
@@ -158,7 +158,7 @@ export default function TasksList({
 
           <select
             aria-label="Filtra per assegnatario"
-            className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white/82 outline-none"
+            className="rounded-2xl border border-white/[0.08] bg-white/[0.045] px-4 py-3 text-sm font-semibold text-white/72 outline-none transition focus:border-[#0166A4]/35"
             value={selectedAssigneeId}
             onChange={(event) => setSelectedAssigneeId(event.target.value)}
           >
@@ -178,16 +178,16 @@ export default function TasksList({
         </div>
       </div>
 
-      <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="space-y-3">
+      <div className="mt-7 grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="space-y-3.5">
           {filteredTasks.length === 0 ? (
-            <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 text-sm text-white/55">
+            <div className="rounded-2xl border border-white/[0.07] bg-white/[0.035] p-5 text-sm text-white/55">
               Nessuna attività corrisponde ai filtri selezionati.
             </div>
           ) : null}
 
           {openTasks.length === 0 && filteredTasks.length > 0 ? (
-            <div className="rounded-3xl border border-[#97B822]/25 bg-[#97B822]/10 p-5 text-sm text-[#E6F6A8]">
+            <div className="rounded-2xl border border-[#97B822]/20 bg-[#97B822]/8 p-5 text-sm text-[#E6F6A8]">
               Tutte le attività filtrate risultano completate.
             </div>
           ) : null}
@@ -227,17 +227,17 @@ function TaskRow({
   const isStandby = task.status === "In stand-by";
 
   const cardClasses = isInProgress
-    ? "border-[#0166A4]/40 bg-[#0166A4]/[0.05] shadow-[0_0_28px_rgba(1,102,164,0.10)]"
+    ? "border-[#0166A4]/24 bg-[#0166A4]/[0.055]"
     : isStandby
-    ? "border-amber-400/25 bg-amber-400/[0.03]"
-    : "border-white/10 bg-white/[0.07]";
+    ? "border-amber-300/18 bg-amber-300/[0.025]"
+    : "border-white/[0.07] bg-white/[0.028]";
 
   return (
     <div
-      className={`group overflow-hidden rounded-3xl border transition hover:-translate-y-px ${cardClasses}`}
+      className={`group overflow-hidden rounded-2xl border transition hover:border-white/12 hover:bg-white/[0.045] ${cardClasses}`}
     >
       <div className="flex min-h-0">
-        <div className={`w-1.5 shrink-0 ${getAccentClass(task.status)}`} />
+        <div className={`w-1 shrink-0 ${getAccentClass(task.status)}`} />
 
         <div className="grid min-w-0 flex-1 lg:grid-cols-[1fr_210px]">
           {/* Left: main content */}
@@ -246,7 +246,7 @@ function TaskRow({
               <h3 className="text-base font-black leading-snug text-white">
                 {task.title}
               </h3>
-              <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs font-semibold text-white/50">
+              <span className="rounded-full bg-white/[0.045] px-2 py-0.5 text-xs font-semibold text-white/42">
                 {task.code}
               </span>
               <StatusBadge
@@ -255,7 +255,7 @@ function TaskRow({
               />
             </div>
 
-            <p className="mt-2 text-sm leading-6 text-white/55">
+            <p className="mt-2 text-sm leading-6 text-white/52">
               {task.description}
             </p>
 
@@ -263,13 +263,13 @@ function TaskRow({
               {visibleSectors.map((sector) => (
                 <span
                   key={sector}
-                  className="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-0.5 text-xs font-semibold text-white/55"
+                  className="rounded-full border border-white/[0.07] bg-white/[0.035] px-2.5 py-0.5 text-xs font-semibold text-white/50"
                 >
                   {sector}
                 </span>
               ))}
               {hiddenSectors > 0 ? (
-                <span className="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-0.5 text-xs font-semibold text-white/38">
+                <span className="rounded-full border border-white/[0.07] bg-white/[0.035] px-2.5 py-0.5 text-xs font-semibold text-white/36">
                   +{hiddenSectors}
                 </span>
               ) : null}
@@ -282,7 +282,7 @@ function TaskRow({
                   {checklist.completed}/{checklist.total} · {checklist.percent}%
                 </span>
               </div>
-              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/[0.07]">
                 <div
                   className="h-full rounded-full bg-[#97B822] transition-all"
                   style={{ width: `${checklist.percent}%` }}
@@ -291,8 +291,8 @@ function TaskRow({
             </div>
 
             {isStandby && task.standbyInfo ? (
-              <div className="mt-3 inline-flex items-start gap-2 rounded-xl border border-amber-300/20 bg-amber-300/[0.08] px-3 py-2 text-xs text-amber-100/80">
-                <span className="mt-0.5 h-3 w-3 shrink-0 rounded-full border border-amber-300/50 bg-amber-300/20" />
+              <div className="mt-3 inline-flex items-start gap-2 rounded-xl border border-amber-300/16 bg-amber-300/[0.055] px-3 py-2 text-xs text-amber-100/76">
+                <span className="mt-0.5 h-3 w-3 shrink-0 rounded-full border border-amber-300/35 bg-amber-300/16" />
                 <span>
                   <span className="font-black">Stand-by:</span>{" "}
                   {task.standbyInfo.reason}
@@ -303,14 +303,14 @@ function TaskRow({
           </div>
 
           {/* Right: meta + actions */}
-          <div className="flex flex-col gap-4 border-t border-white/[0.08] bg-white/[0.03] p-4 lg:border-l lg:border-t-0">
+          <div className="flex flex-col gap-4 border-t border-white/[0.06] bg-black/[0.06] p-4 lg:border-l lg:border-t-0">
             <div>
               <p className="mb-2 text-xs font-semibold text-white/38">Assegnatari</p>
               <div className="flex flex-wrap gap-1.5">
                 {task.assignees.map((assignee) => (
                   <span
                     key={assignee.id}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] py-0.5 pl-0.5 pr-2 text-xs font-semibold text-white/62"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.07] bg-white/[0.035] py-0.5 pl-0.5 pr-2 text-xs font-semibold text-white/58"
                   >
                     <UserAvatar user={assignee} />
                     {assignee.name.split(" ")[0]}
@@ -328,14 +328,14 @@ function TaskRow({
             <div className="mt-auto flex flex-col gap-2">
               <button
                 type="button"
-                className="rounded-2xl border border-white/15 bg-white/[0.08] px-4 py-2 text-xs font-bold text-white/65 transition hover:bg-white/[0.15]"
+                className="rounded-2xl border border-white/[0.08] bg-white/[0.035] px-4 py-2 text-xs font-bold text-white/58 transition hover:bg-white/[0.07] hover:text-white/78"
                 onClick={() => onOpenTaskDetails(task.code)}
               >
                 Dettagli
               </button>
               <button
                 type="button"
-                className="rounded-2xl bg-white px-4 py-2.5 text-sm font-black text-[#061521] shadow-lg transition enabled:group-hover:scale-[1.02] disabled:cursor-not-allowed disabled:bg-white/35"
+                className="rounded-2xl bg-white px-4 py-2.5 text-sm font-black text-[#061521] shadow-sm transition enabled:hover:bg-white/90 disabled:cursor-not-allowed disabled:bg-white/30"
                 disabled={isTaskActionDisabled(task.status)}
                 onClick={() => onTaskAction(task.code)}
               >
@@ -357,20 +357,20 @@ function CompletedTasksPanel({
   onOpenTaskDetails: (taskCode: string) => void;
 }) {
   return (
-    <aside className="rounded-3xl border border-[#97B822]/25 bg-[#97B822]/10 p-4 xl:sticky xl:top-6 xl:self-start">
+    <aside className="rounded-2xl border border-white/[0.07] bg-white/[0.026] p-4 xl:sticky xl:top-8 xl:self-start">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-sm text-[#E6F6A8]/75">Archivio giornata</p>
+          <p className="text-sm text-white/45">Archivio giornata</p>
           <h3 className="mt-1 text-xl font-black">Completate</h3>
         </div>
-        <span className="rounded-full border border-[#97B822]/30 bg-[#97B822]/15 px-3 py-1 text-xs font-black text-[#E6F6A8]">
+        <span className="rounded-full border border-[#97B822]/24 bg-[#97B822]/10 px-3 py-1 text-xs font-black text-[#E6F6A8]">
           {tasks.length}
         </span>
       </div>
 
       <div className="mt-4 space-y-3">
         {tasks.length === 0 ? (
-          <p className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm leading-6 text-white/55">
+          <p className="rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4 text-sm leading-6 text-white/52">
             Nessuna attività completata nei filtri attuali.
           </p>
         ) : (
@@ -380,7 +380,7 @@ function CompletedTasksPanel({
             return (
               <div
                 key={task.code}
-                className="rounded-2xl border border-[#97B822]/25 bg-[#061521]/25 p-4"
+                className="rounded-2xl border border-white/[0.07] bg-[#061521]/22 p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -403,7 +403,7 @@ function CompletedTasksPanel({
                       {checklist.completed}/{checklist.total}
                     </span>
                   </div>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
+                  <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.07]">
                     <div
                       className="h-full rounded-full bg-[#97B822]"
                       style={{ width: `${checklist.percent}%` }}
@@ -413,7 +413,7 @@ function CompletedTasksPanel({
 
                 <button
                   type="button"
-                  className="mt-4 w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-bold text-white/78 transition hover:bg-white/20"
+                  className="mt-4 w-full rounded-2xl border border-white/[0.08] bg-white/[0.035] px-4 py-2.5 text-sm font-bold text-white/62 transition hover:bg-white/[0.07] hover:text-white/82"
                   onClick={() => onOpenTaskDetails(task.code)}
                 >
                   Apri dettagli

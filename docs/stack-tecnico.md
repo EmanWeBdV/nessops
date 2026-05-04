@@ -26,6 +26,14 @@ Auth:
 - MVP: login mock/base
 - Finale: Microsoft Entra ID / SSO
 
+Microsoft 365:
+
+- integrazione futura con Microsoft Graph
+- calendario utente tramite Outlook/Teams
+- eventi Home tramite Graph Calendar API
+- permesso minimo preferito: Calendars.ReadBasic
+- usare Calendars.Read solo se servono dettagli completi degli eventi
+
 Storage:
 
 - server aziendale o object storage privato
@@ -43,3 +51,4 @@ Deployment:
 
 Regola:
 per ora si lavora solo su frontend, dati mock, Home e Operations.
+La card Agenda in Home può essere prototipata con dati mock prima dell'integrazione reale Microsoft Graph.

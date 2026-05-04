@@ -33,8 +33,8 @@ function getDueDateStyle(daysUntilDue: number) {
     return {
       icon: "M12 9v4m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z",
       label: "Scaduta",
-      classes: "border-red-300/45 bg-red-400/20 text-red-50 shadow-red-500/10",
-      iconClasses: "bg-red-300 text-[#061521]",
+      classes: "border-red-300/24 bg-red-400/12 text-red-50",
+      iconClasses: "bg-red-300/90 text-[#061521]",
     };
   }
 
@@ -42,8 +42,8 @@ function getDueDateStyle(daysUntilDue: number) {
     return {
       icon: "M12 8v5l3 2m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
       label: "Scade oggi",
-      classes: "border-red-300/45 bg-red-400/20 text-red-50 shadow-red-500/10",
-      iconClasses: "bg-red-300 text-[#061521]",
+      classes: "border-red-300/24 bg-red-400/12 text-red-50",
+      iconClasses: "bg-red-300/90 text-[#061521]",
     };
   }
 
@@ -52,8 +52,8 @@ function getDueDateStyle(daysUntilDue: number) {
       icon: "M5 4v16M6 5h10l-1.5 4L16 13H6",
       label: `${daysUntilDue}g rimasti`,
       classes:
-        "border-amber-300/45 bg-amber-300/20 text-amber-50 shadow-amber-400/10",
-      iconClasses: "bg-amber-300 text-[#061521]",
+        "border-amber-300/24 bg-amber-300/12 text-amber-50",
+      iconClasses: "bg-amber-300/90 text-[#061521]",
     };
   }
 
@@ -61,8 +61,8 @@ function getDueDateStyle(daysUntilDue: number) {
     icon: "M20 6L9 17l-5-5",
     label: `${daysUntilDue}g rimasti`,
     classes:
-      "border-[#97B822]/35 bg-[#97B822]/15 text-[#E6F6A8] shadow-[#97B822]/10",
-    iconClasses: "bg-[#97B822] text-[#061521]",
+      "border-[#97B822]/24 bg-[#97B822]/10 text-[#E6F6A8]",
+    iconClasses: "bg-[#97B822]/90 text-[#061521]",
   };
 }
 
@@ -73,7 +73,7 @@ export default function DueDateBadge({ dueDate, size = "sm" }: DueDateBadgeProps
 
   return (
     <span
-      className={`inline-flex items-center gap-2 rounded-2xl border font-black shadow-lg ${style.classes} ${
+      className={`inline-flex items-center gap-2 rounded-2xl border font-black ${style.classes} ${
         isLarge ? "px-3 py-2 text-sm" : "px-2.5 py-1.5 text-xs"
       }`}
     >
